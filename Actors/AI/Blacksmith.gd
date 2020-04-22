@@ -11,6 +11,7 @@ export (Vector2) var self_direction = Vector2(1, 0)
 #Сигнальная переменная для перехода в состояние атаки
 var attack_mode:bool = false
 onready var wander_area = get_parent().get_node("WanderArea")
+onready var can_enter_state: bool = false
 #Сигнальная переменная,определяющая,был ли игрок замечен ИИ
 onready var playerSeen:bool = false
 #Маленькие экспериментики...
@@ -74,13 +75,16 @@ func state_based_behaviour(delta:float):
 		
 
 func walk_away(norm_to_player:Vector2)->void:
-	_velocity.x = (speed.x / 4)
-	sprite.set_flip_h(true)
+	if can_enter_state:
+		_velocity.x = (-speed.x / 4) if character.position > position else (speed.x / 4)
+		sprite.set_flip_h(true)
 
 				
 func _physics_process(delta):
 	_velocity = move_and_slide(_velocity, FLOOR_NORMAL)	
 	var flip_condition = true if self_direction.x == -1 or character.position.x < position.x else false
+	if is_on_wall():
+		self_direction *= -1
 	sprite.set_flip_h(flip_condition) 
 	state_based_behaviour(delta)
 	sprite.play(get_new_animation())
@@ -101,7 +105,7 @@ func setup_timer():
 	
 
 func on_timeout():
-	fsm.enterState("walk_away")
+	can_enter_state = true
 			
 #Если ИИ заметил игрока
 func _on_RivalArea_body_entered(body):
@@ -119,7 +123,9 @@ func _on_RivalArea_body_exited(body):
 		attack_mode = false
 		_velocity = Vector2.ZERO
 		sprite.play("taunt")
+		can_enter_state = false
 		ai_timer.start()
+		fsm.enterState("walk_away")
 		
 func _on_WanderArea_body_entered(body):
 	if body == self:
