@@ -1,0 +1,53 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://levels/TileMap.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Actors/AI/Blacksmith.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Actors/Protagonist/Protagonist.tscn" type="PackedScene" id=3]
+[ext_resource path="res://levels/WanderArea.gd" type="Script" id=4]
+
+[sub_resource type="GDScript" id=1]
+
+[sub_resource type="Animation" id=2]
+resource_name = "Wander"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Blacksmith:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 597, 486.869 ) ]
+}
+
+[sub_resource type="CircleShape2D" id=3]
+radius = 29.3723
+
+[node name="AILevel" type="Node2D"]
+position = Vector2( 0.713806, -1.06828 )
+script = SubResource( 1 )
+
+[node name="TileMap" parent="." instance=ExtResource( 1 )]
+tile_data = PoolIntArray( 131072, 0, 0, 131073, 0, 0, 131074, 0, 0, 131075, 0, 0, 131076, 0, 0, 131077, 0, 0, 131078, 0, 0, 131079, 0, 0, 131080, 0, 0, 131081, 0, 0, 131082, 0, 0, 131083, 0, 0, 131084, 0, 0, 131085, 0, 0, 131086, 0, 0, 196608, 0, 0, 196622, 0, 0, 262144, 0, 0, 262145, 0, 0, 262157, 0, 0, 262158, 0, 0, 327680, 0, 0, 327681, 0, 0, 327682, 0, 0, 327692, 0, 0, 327693, 0, 0, 327694, 0, 0, 393216, 0, 0, 393217, 0, 0, 393218, 0, 0, 393228, 0, 0, 393229, 0, 0, 393230, 0, 0, 458752, 0, 0, 458753, 0, 0, 458754, 0, 0, 458755, 0, 0, 458763, 0, 0, 458764, 0, 0, 458765, 0, 0, 458766, 0, 0, 524288, 0, 0, 524289, 0, 0, 524290, 0, 0, 524291, 0, 0, 524292, 0, 0, 524293, 0, 0, 524294, 0, 0, 524295, 0, 0, 524296, 0, 0, 524297, 0, 0, 524298, 0, 0, 524299, 0, 0, 524300, 0, 0, 524301, 0, 0, 524302, 0, 0 )
+
+[node name="Blacksmith" parent="." instance=ExtResource( 2 )]
+position = Vector2( 343.396, 497.699 )
+
+[node name="Protagonist" parent="." instance=ExtResource( 3 )]
+position = Vector2( 805.477, 323.057 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Wander = SubResource( 2 )
+
+[node name="WanderArea" type="Area2D" parent="."]
+position = Vector2( -247.094, -3.32415 )
+script = ExtResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WanderArea"]
+position = Vector2( 590.005, 497.821 )
+shape = SubResource( 3 )
+[connection signal="body_entered" from="WanderArea" to="Blacksmith" method="_on_WanderArea_body_entered"]
+[connection signal="body_exited" from="WanderArea" to="Blacksmith" method="_on_WanderArea_body_exited"]
