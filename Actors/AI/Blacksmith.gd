@@ -22,11 +22,13 @@ onready var TimerTime:bool = false
 func _ready():
 	fsm.enterState("wander")
 	setup_timer()
-	
-#Функция для активации бродячего состояния	
-func wander_around(delta: float, self_direction: Vector2)->void:
-	if	fsm.getActiveState() != fsm.STATES.IDLE:
-		_velocity.x = (speed.x / 4) * self_direction.x
+
+
+#
+##Функция для активации бродячего состояния	
+#func wander_around(delta: float, self_direction: Vector2)->void:
+#	if	fsm.getActiveState() != fsm.STATES.IDLE:
+#		_velocity.x = (speed.x / 4) * self_direction.x
 	
 #Анимации ты уже знаешь
 func get_new_animation()->String:
@@ -41,7 +43,9 @@ func get_new_animation()->String:
 	
 #Get self_direction to the player
 func get_norm()->Vector2:
-	return (character.position - position).normalized()
+	if not character.is_dead:
+		return (character.position - position).normalized()
+	return Vector2.ZERO
 	
 	
 #Функция для атаки игрока	
@@ -64,8 +68,8 @@ func idling():
 #Функция для перехода в разные состояния
 func state_based_behaviour(delta:float):
 	match fsm.getActiveState():
-		fsm.STATES.WANDER:
-			wander_around(delta, self_direction)
+#		fsm.STATES.WANDER:
+#			wander_around(delta, self_direction)
 		fsm.STATES.AGGRESSIVE:
 			rival_player(get_norm())
 		fsm.STATES.IDLE:
@@ -79,15 +83,18 @@ func walk_away(norm_to_player:Vector2)->void:
 		_velocity.x = (-speed.x / 4) if character.position > position else (speed.x / 4)
 		sprite.set_flip_h(true)
 
-				
+
 func _physics_process(delta):
 	_velocity = move_and_slide(_velocity, FLOOR_NORMAL)	
 	var flip_condition = true if self_direction.x == -1 or character.position.x < position.x else false
 	if is_on_wall():
 		self_direction *= -1
+	if (attack_mode && position.distance_to(character.position) <= 40):
+		character.is_dead = true
 	sprite.set_flip_h(flip_condition) 
 	state_based_behaviour(delta)
 	sprite.play(get_new_animation())
+
 
 #Here comes code for handling entering/exiting areas
 func _on_WanderArea_body_exited(body):
@@ -95,6 +102,7 @@ func _on_WanderArea_body_exited(body):
 		if fsm.getActiveState() == fsm.STATES.WANDER:
 			self_direction *= -1
 			print("DEBUG(WanderArea): Body exited")
+
 
 func setup_timer():
 	ai_timer = Timer.new()
@@ -106,32 +114,35 @@ func setup_timer():
 
 func on_timeout():
 	can_enter_state = true
-			
-#Если ИИ заметил игрока
-func _on_RivalArea_body_entered(body):
-	if body == character:
-		print("Blacksmith saw the player")
-		fsm.enterState("aggressive")
-		playerSeen = true
-		print("DEBUG(RivalArea): Body entered")	
+#
+##Если ИИ заметил игрока
+#func _on_RivalArea_body_entered(body):
+#	if body == character:
+#		var forward = get_transform().x.normalized()
+#		print(forward)
+#		if (get_norm().dot(forward) > 0):
+#			print("Blacksmith saw the player")
+#			fsm.enterState("aggressive")
+#			playerSeen = true
+#			print("DEBUG(RivalArea): Body entered")	
 
-#Если игрок вышел из опасной зоны		
-func _on_RivalArea_body_exited(body):
-	if body == character:
-		print("DEBUG(RivalArea): Body exited")	
-		playerSeen = false
-		attack_mode = false
-		_velocity = Vector2.ZERO
-		sprite.play("taunt")
-		can_enter_state = false
-		ai_timer.start()
-		fsm.enterState("walk_away")
-		
-func _on_WanderArea_body_entered(body):
-	if body == self:
-		print("DEBUG(WanderArea): Body entered")
-		fsm.enterState("wander")
-		
+##Если игрок вышел из опасной зоны		
+#func _on_RivalArea_body_exited(body):
+#	if body == character:
+#		if (playerSeen):
+#			print("DEBUG(RivalArea): Body exited")	
+#			playerSeen = false
+#			attack_mode = false
+#			_velocity = Vector2.ZERO
+#			sprite.play("taunt")
+#			can_enter_state = false
+#			ai_timer.start()
+#			fsm.enterState("walk_away")
+#
+#func _on_WanderArea_body_entered(body):
+#	if body == self:
+#		print("DEBUG(WanderArea): Body entered")
+#
 
 #func _on_Timer_timeout():
 #	fsm.enterState("walk_away")

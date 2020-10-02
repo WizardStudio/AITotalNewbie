@@ -1,0 +1,20 @@
+[gd_scene format=2]
+
+[node name="MainGUI" type="MarginContainer"]
+margin_right = 1019.0
+margin_bottom = 64.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 1019.0
+margin_bottom = 64.0
+
+[node name="Bars" type="VBoxContainer" parent="HBoxContainer"]
+margin_bottom = 64.0
+
+[node name="Counter" type="HBoxContainer" parent="HBoxContainer"]
+margin_left = 4.0
+margin_right = 4.0
+margin_bottom = 64.0

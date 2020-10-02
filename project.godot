@@ -10,6 +10,11 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "KinematicBody2D",
+"class": "AIParent",
+"language": "GDScript",
+"path": "res://Actors/AI/AIParent.gd"
+}, {
+"base": "KinematicBody2D",
 "class": "Actor",
 "language": "GDScript",
 "path": "res://Actors/Actor.gd"
@@ -19,14 +24,21 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Actors/AI/Blacksmith.gd"
 }, {
+"base": "AIParent",
+"class": "Griffin",
+"language": "GDScript",
+"path": "res://Actors/AI/Griffin.gd"
+}, {
 "base": "Actor",
 "class": "Protagonist",
 "language": "GDScript",
 "path": "res://Actors/Protagonist/Protagonist.gd"
 } ]
 _global_script_class_icons={
+"AIParent": "",
 "Actor": "",
 "Blacksmith": "",
+"Griffin": "",
 "Protagonist": ""
 }
 
@@ -60,6 +72,11 @@ move_left={
 jump={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":32,"unicode":0,"echo":false,"script":null)
+ ]
+}
+shield={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":2,"pressed":false,"doubleclick":false,"script":null)
  ]
 }
 
